@@ -6,12 +6,12 @@ import (
 )
 
 func DBInit() *gorm.DB {
-	db, err := gorm.Open("mysql", "dapurhafi:@tcp(127.0.0.1:3306)/dapurhafi?charset=utf8&parseTime=True&loc=Local")
+	db, err := gorm.Open("mysql", "dapurhafi:dapurhafi@/dapurhafi?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		panic("failed to connect to database")
 	}
 
-	db.AutoMigrate(mdl.User{})
+	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&mdl.User{})
 	
 	return db
 }

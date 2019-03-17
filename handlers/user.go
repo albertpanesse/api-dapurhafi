@@ -1,23 +1,23 @@
 package handlers
 
 import (
+	"net/http"
 	"github.com/gin-gonic/gin"
 	mdl "api-dapurhafi/models"
-	cfg "api-dapurhafi/configs"
 )
 
-func (dbconn *cfg.DBConn) CreateUser(c *gin.Context) {
+func (dbconn *DBConn) CreateUser(c *gin.Context) {
 	var (
-	person structs.Person
-	result gin.H
+		user mdl.User
+		result gin.H
 	)
-	first_name := c.PostForm("first_name")
-	last_name := c.PostForm("last_name")
-	person.First_Name = first_name
-	person.Last_Name = last_name
-	dbconn.DB.Create(&person)
+	
+	c.BindJSON(&user)
+	
+	dbconn.DB.Create(&user)
 	result = gin.H{
-	"result": person,
+		"result": user,
 	}
+	
 	c.JSON(http.StatusOK, result)
 }
