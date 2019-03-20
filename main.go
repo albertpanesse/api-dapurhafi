@@ -3,11 +3,13 @@ package main
 import (
 	"os"
 	"log"
+	"time"
 	"github.com/gin-gonic/gin"
 	hnd "api-dapurhafi/handlers"
 	cfg "api-dapurhafi/configs"
 	"github.com/subosito/gotenv"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gin-contrib/cors"
 )
 
 func main() {
@@ -18,6 +20,18 @@ func main() {
 	dbconn := &hnd.DBConn{DB: db}
 
 	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"https://dapurhafi.com"},
+		AllowMethods:     []string{"PUT", "GET", "POST", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://dapurhafi.com"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
 
 	// custom endpoint
 	router.POST("/register", dbconn.Register)
