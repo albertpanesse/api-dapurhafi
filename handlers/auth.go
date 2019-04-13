@@ -27,31 +27,38 @@ func (dbconn *DBConn) Register(c *gin.Context) {
 		dbconn.DB.Create(&newUser)
 
 		if &newUser != nil {
-			plainText := "Silakan kopi dan paste URL berikut ini di browser Anda: http://dapurhafi.com/verify/" + verificationToken
-			
-			htmlText := "<a href=\"https://dapurhafi.com/verify/" + verificationToken + "\" target=\"_blank\">Silakan klik disini untuk aktivasi akun Anda.</a>"
-			
-			subject := "You are one step away"
+			if os.Getenv("MAILSEND_ENABLE") == "true" {
+				plainText := "Silakan kopi dan paste URL berikut ini di browser Anda: http://dapurhafi.com/verify/" + verificationToken
 
-			status, code, body := util.SendEmail(newUser.Fullname, newUser.Email, os.Getenv("DH_MAIL_NAME"), os.Getenv("DH_MAIL_EMAIL"), subject, plainText, htmlText)
-			if status == true {			
-				result = gin.H{
-					"success": true,
-					"result": newUser.Email,
-				}
+				htmlText := "<a href=\"https://dapurhafi.com/verify/" + verificationToken + "\" target=\"_blank\">Silakan klik disini untuk aktivasi akun Anda.</a>"
+
+				subject := "You are one step away"
+
+				status, code, body := util.SendEmail(newUser.Fullname, newUser.Email, os.Getenv("DH_MAIL_NAME"), os.Getenv("DH_MAIL_EMAIL"), subject, plainText, htmlText)
+				if status == true {			
+					result = gin.H{
+						"success": true,
+						"result": newUser.Email,
+					}
+				} else {
+					result = gin.H{
+						"success": false,
+						"error_type": "SENDGRID_ERROR",
+						"error": "Code: " + string(code) + " [" + body + "]",
+					}			
+				}				
 			} else {
 				result = gin.H{
 					"success": false,
-					"error_type": "SENDGRID_ERROR",
-					"error": "Code: " + string(code) + " [" + body + "]",
-				}			
-			}
+					"error_type": "DATABASE_ERROR",
+					"error": "Creating new user has failed",
+				}
+			}				
 		} else {
 			result = gin.H{
-				"success": false,
-				"error_type": "DATABASE_ERROR",
-				"error": "Creating new user has failed",
-			}
+				"success": true,
+				"result": newUser.Email,
+			}			
 		}
 	} else {
 		result = gin.H{
@@ -72,7 +79,7 @@ func (dbconn *DBConn) Verify(c *gin.Context) {
 	
 	token := c.Param("token")
 
-	dbconn.DB.Where("verificationToken = '?'", token).First(&oldUser)
+	dbconn.DB.Where("verification_token = '?'", token).First(&oldUser)
 		
 	accessToken, _ := util.RandomString(32)
 	accessExpired := time.Now()

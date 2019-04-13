@@ -22,7 +22,7 @@ func main() {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://dapurhafi.com"},
+		AllowOrigins:     []string{"https://" + os.Getenv("DOMAIN_NAME")},
 		AllowMethods:     []string{"PUT", "GET", "POST", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -35,6 +35,7 @@ func main() {
 
 	// custom endpoint
 	router.POST("/register", dbconn.Register)
+	router.POST("/verify", dbconn.Verify)
 	
 	// CRUD endpoint
 	router.GET("/users", dbconn.GetUsers)
