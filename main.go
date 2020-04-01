@@ -8,7 +8,6 @@ import (
 	hnd "api-dapurhafi/handlers"
 	cfg "api-dapurhafi/configs"
 	"github.com/subosito/gotenv"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/gin-contrib/cors"
 )
 

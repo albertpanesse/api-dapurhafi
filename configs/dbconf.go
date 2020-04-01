@@ -3,15 +3,16 @@ package configs
 import (
 	mdl "api-dapurhafi/models"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 func DBInit() *gorm.DB {
-	db, err := gorm.Open("mysql", "dapurhafi:dapurhafi@/dapurhafi?charset=utf8&parseTime=True&loc=Local")
+	db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user=dapurhafi dbname=dapurhafi password=dapurhafi")
 	if err != nil {
 		panic("failed to connect to database")
 	}
 
-	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&mdl.User{})
+	db.AutoMigrate(&mdl.User{})
 	
 	return db
 }
