@@ -21,13 +21,13 @@ func main() {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"https://" + os.Getenv("DOMAIN_NAME")},
+		AllowOrigins: []string{"http://" + os.Getenv("DOMAIN_NAME")},
 		AllowMethods: []string{"PUT", "GET", "POST", "DELETE"},
 		AllowHeaders: []string{"Origin", "Content-Type"},
 		ExposeHeaders: []string{"Content-Length"},
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://dapurhafi.com"
+			return origin == "http://" + os.Getenv("DOMAIN_NAME")
 		},
 		MaxAge: 12 * time.Hour,
 	}))
