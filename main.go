@@ -32,6 +32,9 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
+	// serve image
+	router.GET("/image/:filename", hnd.ImageFile)
+
 	// auth endpoint
 	router.POST("/register", dbconn.Register)
 	router.POST("/verify", dbconn.Verify)
