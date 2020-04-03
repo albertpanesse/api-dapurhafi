@@ -10,7 +10,7 @@ type User struct {
 	Fullname					string				`gorm:"type:varchar(128); not null"`
 	Email						string				`gorm:"type:varchar(255); not null"`
 	Paswd						string				`gorm:"type:varchar(64); not null"`
-	VerificationToken			string				`gorm:"type:varchar(255); not null"`
+	VerificationToken			string				`gorm:"type:varchar(255)"`
 	VerificationExpired			time.Time			`sql:"DEFAULT:current_timestamp"`
 	ForgotToken					string				`gorm:"type:varchar(255)"`
 	ForgotExpired				time.Time			`sql:"DEFAULT:current_timestamp"`	

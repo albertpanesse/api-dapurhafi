@@ -32,16 +32,20 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	// custom endpoint
+	// auth endpoint
 	router.POST("/register", dbconn.Register)
 	router.POST("/verify", dbconn.Verify)
 	
-	// CRUD endpoint
+	// user endpoints
 	router.GET("/users", dbconn.GetUsers)
 	router.GET("/user/:id", dbconn.GetUser)
 	router.POST("/user", dbconn.CreateUser)
 	router.PUT("/user/:id", dbconn.UpdateUser)
 	router.DELETE("/user/:id", dbconn.DeleteUser)
+
+	// menu endpoints
+	router.GET("/menus", dbconn.GetMenus)
+	router.GET("/menu/:id", dbconn.GetMenu)
 	
 	log.Fatal(router.Run(":" + os.Getenv("PORT")))
 }
