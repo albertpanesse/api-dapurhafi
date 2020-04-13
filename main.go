@@ -13,9 +13,9 @@ import (
 
 func main() {
 	gotenv.Load()
-	
+
 	db := cfg.DBInit()
-	
+
 	dbconn := &hnd.DBConn{DB: db}
 
 	router := gin.Default()
@@ -33,12 +33,13 @@ func main() {
 	}))
 
 	// serve image
-	router.GET("/image/:filename", hnd.ImageFile)
+	router.GET("/image/:filename", hnd.GetImage)
+	router.POST("/image", hnd.CreateImage)
 
 	// auth endpoint
 	router.POST("/register", dbconn.Register)
 	router.POST("/verify", dbconn.Verify)
-	
+
 	// user endpoints
 	router.GET("/users", dbconn.GetUsers)
 	router.GET("/user/:id", dbconn.GetUser)
@@ -49,6 +50,8 @@ func main() {
 	// menu endpoints
 	router.GET("/menus", dbconn.GetMenus)
 	router.GET("/menu/:id", dbconn.GetMenu)
-	
-	log.Fatal(router.Run(":" + os.Getenv("PORT")))
+	router.POST("/menu", dbconn.CreateMenu)
+	router.GET("/favs", dbconn.GetFavs)
+
+	log.Fatal(router.Run(os.Getenv("HOST") + ":" + os.Getenv("PORT")))
 }
