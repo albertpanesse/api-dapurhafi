@@ -42,6 +42,7 @@ func GetImage(c *gin.Context) {
 	return
 }
 
-func CreateImage(c *gin.Context) {
-
+func UploadImage(c *gin.Context) {
+	file, handler, err := c.Request.FormFile("uploadfile")
+	
 }

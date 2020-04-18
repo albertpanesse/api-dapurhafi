@@ -34,7 +34,7 @@ func main() {
 
 	// serve image
 	router.GET("/image/:filename", hnd.GetImage)
-	router.POST("/image", hnd.CreateImage)
+	router.POST("/image", hnd.UploadImage)
 
 	// auth endpoint
 	router.POST("/register", dbconn.Register)
