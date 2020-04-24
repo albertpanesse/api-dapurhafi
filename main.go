@@ -15,6 +15,7 @@ func main() {
 	gotenv.Load()
 
 	db := cfg.DBInit()
+	cfg.DBSeed(os.Getenv("SEEDING_ACTIVE") == "true", db)
 
 	dbconn := &hnd.DBConn{DB: db}
 
