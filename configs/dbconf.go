@@ -38,7 +38,7 @@ func DBSeed(isActive bool, db *gorm.DB ) {
 			campaignId = scope.PrimaryKeyValue().(uint)
 		})
 
-		db.Create(&mdl.Campaign{Name: "Regular", Description: "Regular campaign"})
+		db.Create(&mdl.Campaign{Name: "Regular", Description: "Regular campaign", IsActive: true})
 
 		db.Callback().Create().Remove("get_new_id")
 

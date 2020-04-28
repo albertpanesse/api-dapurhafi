@@ -11,5 +11,5 @@ type Menu struct {
 	Tags							string				`gorm:"type:varchar(255)"`
 	OrderCount				uint 					`gorm:"type:int; not null; default: 0"`
 	Menupics					[]Menupic
-	Menuprices				[]Menuprice
+	Menuprice					Menuprice
 }

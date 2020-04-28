@@ -12,7 +12,7 @@ func (dbconn *DBConn) GetMenus(c *gin.Context) {
 		result gin.H
 	)
 
-	dbconn.DB.Preload("Menupics").Find(&menus)
+	dbconn.DB.Preload("Menupics").Preload("Menuprice").Find(&menus)
 
 	result = gin.H{
 		"success": true,
@@ -30,7 +30,7 @@ func (dbconn *DBConn) GetMenu(c *gin.Context) {
 
 	id := c.Param("id")
 
-	dbconn.DB.Preload("Menupics").First(&menu, id)
+	dbconn.DB.Preload("Menupics").Preload("Menuprice").First(&menu, id)
 
 	result = gin.H{
 		"success": true,
