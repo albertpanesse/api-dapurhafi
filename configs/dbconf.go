@@ -13,51 +13,56 @@ func DBSeed(isActive bool, db *gorm.DB ) {
 	if isActive {
 		db.
 			Exec("DROP TABLE users").
-			Exec("DROP TABLE menupics").
-			Exec("DROP TABLE menuprices").
+			Exec("DROP TABLE product_picts").
+			Exec("DROP TABLE product_prices").
 			Exec("DROP TABLE campaigns").
-			Exec("DROP TABLE menus")
+			Exec("DROP TABLE products")
 
 		db.CreateTable(&mdl.User{})
-		db.CreateTable(&mdl.Campaign{})
-		db.CreateTable(&mdl.Menu{})
-		db.CreateTable(&mdl.Menuprice{}).
+		db.CreateTable(&mdl.Campaign{}).
+				AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
+		db.CreateTable(&mdl.Product{}).
+				AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
+		db.CreateTable(&mdl.ProductPrice{}).
 				AddForeignKey("campaign_id", "campaigns(id)", "CASCADE", "CASCADE").
-				AddForeignKey("menu_id", "menus(id)", "CASCADE", "CASCADE")
-		db.CreateTable(&mdl.Menupic{}).
-				AddForeignKey("menu_id", "menus(id)", "CASCADE", "CASCADE")
+				AddForeignKey("product_id", "products(id)", "CASCADE", "CASCADE")
+		db.CreateTable(&mdl.ProductPict{}).
+				AddForeignKey("product_id", "products(id)", "CASCADE", "CASCADE")
 
 		h := md5.New()
 
+		// create new user, and get the ID
+		var userId uint
+		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
+			userId = scope.PrimaryKeyValue().(uint)
+		})
 		io.WriteString(h, "123123")
-		db.Create(&mdl.User{Fullname: "Albert Panesse", Email: "albert.panesse@gmail.com", Username: "albert.panesse@gmail.com", Password: fmt.Sprintf("%x", h.Sum(nil))})
+		db.Create(&mdl.User{Fullname: "Albert Panesse", Email: "albert.panesse@gmail.com", Mobile: "081226919868", Password: fmt.Sprintf("%x", h.Sum(nil))})
+		db.Callback().Create().Remove("get_new_id")
 
+		// create new campaign, and get the ID
 		var campaignId uint
-
 		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
 			campaignId = scope.PrimaryKeyValue().(uint)
 		})
-
-		db.Create(&mdl.Campaign{Name: "Regular", Description: "Regular campaign", IsActive: true})
-
+		db.Create(&mdl.Campaign{UserID: userId, Name: "Regular", Description: "Regular campaign", IsActive: true})
 		db.Callback().Create().Remove("get_new_id")
 
-		var menuId uint
-
+		// create new product, and get the ID
+		var productId uint
 		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
-			menuId = scope.PrimaryKeyValue().(uint)
+			productId = scope.PrimaryKeyValue().(uint)
 		})
 
-		db.Create(&mdl.Menu{Name: "Nasi Goreng", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "nasi, nasi goreng"})
-		db.Create(&mdl.Menupic{MenuID: menuId, Filename: "c37ab8d0072937659975b874dafe04cb.jpg"})
-		db.Create(&mdl.Menuprice{CampaignID: campaignId, MenuID: menuId, Price: 10000})
-		db.Create(&mdl.Menu{Name: "Rendang Daging Sapi", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, rendang, sapi"})
-		db.Create(&mdl.Menupic{MenuID: menuId, Filename: "1b70abfe370b98393d3e08fcf97891cc.jpg"})
-		db.Create(&mdl.Menuprice{CampaignID: campaignId, MenuID: menuId, Price: 25000})
-
-		db.Create(&mdl.Menu{Name: "Ayam Balado", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, balado, ayam"})
-		db.Create(&mdl.Menupic{MenuID: menuId, Filename: "6533e11e314b63821e1f569899d8f331.jpg"})
-		db.Create(&mdl.Menuprice{CampaignID: campaignId, MenuID: menuId, Price: 20000})
+		db.Create(&mdl.Product{UserID: userId, Name: "Nasi Goreng", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "nasi, nasi goreng"})
+		db.Create(&mdl.ProductPict{ProductID: productId, Filename: "c37ab8d0072937659975b874dafe04cb.jpg"})
+		db.Create(&mdl.ProductPrice{CampaignID: campaignId, ProductID: productId, Price: 10000})
+		db.Create(&mdl.Product{UserID: userId, Name: "Rendang Daging Sapi", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, rendang, sapi"})
+		db.Create(&mdl.ProductPict{ProductID: productId, Filename: "1b70abfe370b98393d3e08fcf97891cc.jpg"})
+		db.Create(&mdl.ProductPrice{CampaignID: campaignId, ProductID: productId, Price: 25000})
+		db.Create(&mdl.Product{UserID: userId, Name: "Ayam Balado", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, balado, ayam"})
+		db.Create(&mdl.ProductPict{ProductID: productId, Filename: "6533e11e314b63821e1f569899d8f331.jpg"})
+		db.Create(&mdl.ProductPrice{CampaignID: campaignId, ProductID: productId, Price: 20000})
 
 		db.Callback().Create().Remove("get_new_id")
 	}

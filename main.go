@@ -48,11 +48,12 @@ func main() {
 	router.PUT("/user/:id", dbconn.UpdateUser)
 	router.DELETE("/user/:id", dbconn.DeleteUser)
 
-	// menu endpoints
-	router.GET("/menus", dbconn.GetMenus)
-	router.GET("/menu/:id", dbconn.GetMenu)
-	router.POST("/menu", dbconn.CreateMenu)
-	router.GET("/favs", dbconn.GetFavs)
+	// product endpoints
+	router.GET("/products", dbconn.GetProducts)
+	router.GET("/product/:id", dbconn.GetProduct)
+	router.POST("/product", dbconn.CreateProduct)
+	router.GET("/favorite", dbconn.GetFavorite)
+	router.GET("/latest", dbconn.GetLatest)
 
 	log.Fatal(router.Run(os.Getenv("HOST") + ":" + os.Getenv("PORT")))
 }

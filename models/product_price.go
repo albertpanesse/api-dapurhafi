@@ -4,9 +4,9 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type Menuprice struct {
+type ProductPrice struct {
 	gorm.Model
-	CampaignID					uint				`gorm:"type:int; not null"`
-	MenuID						uint				`gorm:"type:int; not null"`
+	CampaignID			uint				`gorm:"type:int; not null"`
+	ProductID				uint				`gorm:"type:int; not null"`
 	Price						uint				`gorm:"type:bigint; not null; default 0"`
 }
