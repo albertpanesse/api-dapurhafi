@@ -21,4 +21,5 @@ type User struct {
 	ProfileImage				string				`gorm:"type:varchar(128)"`
 	FacebookId					string				`gorm:"type:varchar(16)"`
 	GoogleId						string				`gorm:"type:varchar(16)"`
+	IsActive						bool					`form:"type:bool; not null; default false`
 }

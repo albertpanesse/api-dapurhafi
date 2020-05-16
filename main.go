@@ -48,10 +48,15 @@ func main() {
 	router.PUT("/user/:id", dbconn.UpdateUser)
 	router.DELETE("/user/:id", dbconn.DeleteUser)
 
+	// retailer endpoints
+	router.GET("/retailers", dbconn.GetRetailers)
+
 	// product endpoints
 	router.GET("/products", dbconn.GetProducts)
 	router.GET("/product/:id", dbconn.GetProduct)
 	router.POST("/product", dbconn.CreateProduct)
+	
+	// custom endpoints
 	router.GET("/favorite", dbconn.GetFavorite)
 	router.GET("/latest", dbconn.GetLatest)
 
