@@ -97,16 +97,3 @@ func (dbconn *DBConn) DeleteUser(c *gin.Context) {
 	
 	c.JSON(http.StatusOK, result)
 }
-
-func (dbconn *DBConn) GetRetailer(c *gin.Context) {
-	var (
-		user mdl.User
-		result gin.H
-	)
-
-	result = gin.H{
-		"success": true,
-	}
-	
-	c.JSON(http.StatusOK, result)
-}

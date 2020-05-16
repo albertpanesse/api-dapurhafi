@@ -12,12 +12,12 @@ import (
 func DBSeed(isActive bool, db *gorm.DB ) {
 	if isActive {
 		db.
-			Exec("DROP TABLE users").
-			Exec("DROP TABLE retailers")
 			Exec("DROP TABLE product_picts").
 			Exec("DROP TABLE product_prices").
+			Exec("DROP TABLE products").
 			Exec("DROP TABLE campaigns").
-			Exec("DROP TABLE products")
+			Exec("DROP TABLE retailers").
+			Exec("DROP TABLE users")
 
 		db.CreateTable(&mdl.User{})
 		db.CreateTable(&mdl.Retailer{}).
@@ -34,32 +34,42 @@ func DBSeed(isActive bool, db *gorm.DB ) {
 
 		h := md5.New()
 
-		// create new user, and get the ID
+		// --- create new user, and get the ID
 		var userId uint
 		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
 			userId = scope.PrimaryKeyValue().(uint)
 		})
+		
 		io.WriteString(h, "123123")
 		db.Create(&mdl.User{Fullname: "Albert Panesse", Email: "albert.panesse@gmail.com", Mobile: "081226919868", Password: fmt.Sprintf("%x", h.Sum(nil))})
+		
 		io.WriteString(h, "123123")
 		db.Create(&mdl.User{Fullname: "Johny Jontor", Email: "situs.ok@gmail.com", Mobile: "081393717674", Password: fmt.Sprintf("%x", h.Sum(nil)), UserType: "retailer"})
+		
 		db.Callback().Create().Remove("get_new_id")
+		// ---
 
 		// create new retailer, and get the ID
 		var retailerId uint
 		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
 			retailerId = scope.PrimaryKeyValue().(uint)
 		})
-		db.Create(&mdl.Retailer{UserID: userId, Name: "Jontor Online Shop", Filename: "logo-jontor.jpg", IsActive: true})
+
+		db.Create(&mdl.Retailer{UserID: userId, Name: "Jontor Online Shop", ProfileImage: "logo-jontor.jpg", IsActive: true})
+
 		db.Callback().Create().Remove("get_new_id")
+		// ---
 
 		// create new campaign, and get the ID
 		var campaignId uint
 		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
 			campaignId = scope.PrimaryKeyValue().(uint)
 		})
+
 		db.Create(&mdl.Campaign{RetailerID: retailerId, Name: "Regular", Description: "Regular campaign", IsActive: true})
+
 		db.Callback().Create().Remove("get_new_id")
+		// ---
 
 		// create new product, and get the ID
 		var productId uint
