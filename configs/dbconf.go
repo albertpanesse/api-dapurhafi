@@ -17,14 +17,17 @@ func DBSeed(isActive bool, db *gorm.DB ) {
 			Exec("DROP TABLE products").
 			Exec("DROP TABLE campaigns").
 			Exec("DROP TABLE retailers").
+			Exec("DROP TABLE categories").
 			Exec("DROP TABLE users")
 
 		db.CreateTable(&mdl.User{})
+		db.CreateTable(&mdl.Category{})
 		db.CreateTable(&mdl.Retailer{}).
 				AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
 		db.CreateTable(&mdl.Campaign{}).
 				AddForeignKey("retailer_id", "retailers(id)", "CASCADE", "CASCADE")
 		db.CreateTable(&mdl.Product{}).
+				AddForeignKey("category_id", "categories(id)", "CASCADE", "CASCADE").
 				AddForeignKey("retailer_id", "retailers(id)", "CASCADE", "CASCADE")
 		db.CreateTable(&mdl.ProductPrice{}).
 				AddForeignKey("campaign_id", "campaigns(id)", "CASCADE", "CASCADE").
@@ -71,19 +74,49 @@ func DBSeed(isActive bool, db *gorm.DB ) {
 		db.Callback().Create().Remove("get_new_id")
 		// ---
 
+		db.Create(&mdl.Category{Name: "Makanan Siap Diolah", Description: "Makanan atau bahan-bahan makanan untuk diolah atau dimasak lagi."})
+		db.Create(&mdl.Category{Name: "Makanan Ringan", Description: "Makanan ringan atau cemilan"})
+		db.Create(&mdl.Category{Name: "Minuman", Description: "Semua produk minuman dalam kemasan"})
+
+		// create new category, and get the ID
+		var categoryId uint
+		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
+			categoryId = scope.PrimaryKeyValue().(uint)
+		})
+		db.Create(&mdl.Category{Name: "Makanan Siap Saji", Description: "Makanan bisa langsung dimakan atau siap disajikan"})
+		db.Callback().Create().Remove("get_new_id")
+		// ---
+
 		// create new product, and get the ID
 		var productId uint
 		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
 			productId = scope.PrimaryKeyValue().(uint)
 		})
 
-		db.Create(&mdl.Product{RetailerID: retailerId, Name: "Nasi Goreng", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "nasi, nasi goreng"})
+		db.Create(&mdl.Product{RetailerID: retailerId, CategoryID: categoryId, Name: "Nasi Goreng", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "nasi, nasi goreng"})
 		db.Create(&mdl.ProductPict{ProductID: productId, Filename: "c37ab8d0072937659975b874dafe04cb.jpg"})
 		db.Create(&mdl.ProductPrice{CampaignID: campaignId, ProductID: productId, Price: 10000})
-		db.Create(&mdl.Product{RetailerID: retailerId, Name: "Rendang Daging Sapi", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, rendang, sapi"})
+		db.Callback().Create().Remove("get_new_id")
+		// ---
+
+		// create new category, and get the ID
+		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
+			categoryId = scope.PrimaryKeyValue().(uint)
+		})
+		db.Create(&mdl.Category{Name: "Lauk-Pauk", Description: "Makanan untuk lauk atau tambahan"})
+		db.Callback().Create().Remove("get_new_id")
+		// ---
+
+		// create new product, and get the ID
+		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
+			productId = scope.PrimaryKeyValue().(uint)
+		})
+
+		db.Create(&mdl.Product{RetailerID: retailerId, CategoryID: categoryId, Name: "Rendang Daging Sapi", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, rendang, sapi"})
 		db.Create(&mdl.ProductPict{ProductID: productId, Filename: "1b70abfe370b98393d3e08fcf97891cc.jpg"})
 		db.Create(&mdl.ProductPrice{CampaignID: campaignId, ProductID: productId, Price: 25000})
-		db.Create(&mdl.Product{RetailerID: retailerId, Name: "Ayam Balado", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, balado, ayam"})
+		
+		db.Create(&mdl.Product{RetailerID: retailerId, CategoryID: categoryId, Name: "Ayam Balado", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, balado, ayam"})
 		db.Create(&mdl.ProductPict{ProductID: productId, Filename: "6533e11e314b63821e1f569899d8f331.jpg"})
 		db.Create(&mdl.ProductPrice{CampaignID: campaignId, ProductID: productId, Price: 20000})
 
