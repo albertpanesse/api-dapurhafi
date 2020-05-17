@@ -4,8 +4,13 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	mdl "api-dapurhafi/models"
-	"strconv"
+	"encoding/json"
 )
+
+type SearchObj struct {
+	Keyword    string `json:"keyword"`
+	CategoryID int 		`json:"categoryId"`
+}
 
 func (dbconn *DBConn) CreateProduct(c *gin.Context) {
 	var (
@@ -118,21 +123,24 @@ func (dbconn *DBConn) GetLatest(c *gin.Context) {
 func (dbconn *DBConn) ProductSearch(c *gin.Context) {
 	var (
 		products []mdl.Product
+		searchObj SearchObj
 		result gin.H
 	)
 
-	keyword := c.Param("keyword")
-	categoryId := c.Param("categoryId")
+	decoder := json.NewDecoder(c.Request.Body)
+	err := decoder.Decode(&searchObj)
+	if err != nil {
+    panic(err)
+  }
 
-	var chain = dbconn.DB.Find(&products)
+	var chain = dbconn.DB
 
-	if (keyword != "") {
-		chain = chain.Where("name LIKE ?", "%" + keyword + "%").Find(&products)
+	if (searchObj.Keyword != "") {
+		chain = chain.Where("name LIKE ?", "%" + searchObj.Keyword + "%").Find(&products)
 	}
 
-	if (categoryId != "-1") {
-		var _categoryId, _ = strconv.ParseUint(categoryId, 10, 16)
-		chain = chain.Where(mdl.Product{CategoryID: uint(_categoryId)}).Find(&products)
+	if (searchObj.CategoryID != -1) {
+		chain = chain.Where(mdl.Product{CategoryID: uint(searchObj.CategoryID)}).Find(&products)
 	}
 	
 	chain.Preload("ProductPicts").Preload("ProductPrice").Preload("Retailer").Preload("Category").Find(&products)
