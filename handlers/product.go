@@ -110,7 +110,7 @@ func (dbconn *DBConn) GetLatest(c *gin.Context) {
 		result gin.H
 	)
 	
-	dbconn.DB.Preload("ProductPicts").Preload("ProductPrice").Preload("Retailer").Preload("Category").Find(&products).Order("updated_at desc")
+	dbconn.DB.Preload("ProductPicts").Preload("ProductPrice").Preload("Retailer").Preload("Category").Limit(10).Find(&products).Order("updated_at desc")
 
 	result = gin.H{
 		"success": true,
