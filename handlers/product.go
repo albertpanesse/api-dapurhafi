@@ -78,7 +78,7 @@ func (dbconn *DBConn) GetProduct(c *gin.Context) {
 	
 	id := c.Param("id")
 	
-	dbconn.DB.Preload("ProductPicts").Preload("ProductPrice").Preload("Retailer").Preload("Category").First(&product, id)
+	dbconn.DB.Preload("ProductPicts").Preload("ProductPrice").Preload("Category").First(&product, id)
 
 	result = gin.H{
 		"success": true,
@@ -94,7 +94,7 @@ func (dbconn *DBConn) GetProducts(c *gin.Context) {
 		result gin.H
 	)
 	
-	dbconn.DB.Preload("ProductPicts").Preload("ProductPrice").Preload("Retailer").Preload("Category").Find(&products)
+	dbconn.DB.Preload("ProductPicts").Preload("ProductPrice").Preload("Category").Find(&products)
 
 	result = gin.H{
 		"success": true,
@@ -110,7 +110,7 @@ func (dbconn *DBConn) GetLatest(c *gin.Context) {
 		result gin.H
 	)
 	
-	dbconn.DB.Preload("ProductPicts").Preload("ProductPrice").Preload("Retailer").Preload("Category").Limit(10).Find(&products).Order("updated_at desc")
+	dbconn.DB.Preload("ProductPicts").Preload("ProductPrice").Preload("Category").Limit(10).Find(&products).Order("updated_at desc")
 
 	result = gin.H{
 		"success": true,
@@ -143,7 +143,7 @@ func (dbconn *DBConn) ProductSearch(c *gin.Context) {
 		chain = chain.Where(mdl.Product{CategoryID: uint(searchObj.CategoryID)}).Find(&products)
 	}
 	
-	chain.Preload("ProductPicts").Preload("ProductPrice").Preload("Retailer").Preload("Category").Find(&products)
+	chain.Preload("ProductPicts").Preload("ProductPrice").Preload("Category").Find(&products)
 
 	result = gin.H{
 		"success": true,

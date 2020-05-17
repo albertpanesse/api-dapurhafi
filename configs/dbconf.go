@@ -22,8 +22,6 @@ func DBSeed(isActive bool, db *gorm.DB ) {
 
 		db.CreateTable(&mdl.User{})
 		db.CreateTable(&mdl.Category{})
-		db.CreateTable(&mdl.Retailer{}).
-				AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
 		db.CreateTable(&mdl.Campaign{}).
 				AddForeignKey("retailer_id", "retailers(id)", "CASCADE", "CASCADE")
 		db.CreateTable(&mdl.Product{}).
@@ -52,24 +50,13 @@ func DBSeed(isActive bool, db *gorm.DB ) {
 		db.Callback().Create().Remove("get_new_id")
 		// ---
 
-		// create new retailer, and get the ID
-		var retailerId uint
-		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
-			retailerId = scope.PrimaryKeyValue().(uint)
-		})
-
-		db.Create(&mdl.Retailer{UserID: userId, Name: "Jontor Online Shop", ProfileImage: "logo-jontor.jpg", IsActive: true})
-
-		db.Callback().Create().Remove("get_new_id")
-		// ---
-
 		// create new campaign, and get the ID
 		var campaignId uint
 		db.Callback().Create().After("get_new_id").Register("get_new_id", func(scope *gorm.Scope) {
 			campaignId = scope.PrimaryKeyValue().(uint)
 		})
 
-		db.Create(&mdl.Campaign{RetailerID: retailerId, Name: "Regular", Description: "Regular campaign", IsActive: true})
+		db.Create(&mdl.Campaign{Name: "Regular", Description: "Regular campaign", IsActive: true})
 
 		db.Callback().Create().Remove("get_new_id")
 		// ---
@@ -93,7 +80,7 @@ func DBSeed(isActive bool, db *gorm.DB ) {
 			productId = scope.PrimaryKeyValue().(uint)
 		})
 
-		db.Create(&mdl.Product{RetailerID: retailerId, CategoryID: categoryId, Name: "Nasi Goreng", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "nasi, nasi goreng"})
+		db.Create(&mdl.Product{CategoryID: categoryId, Name: "Nasi Goreng", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "nasi, nasi goreng"})
 		db.Create(&mdl.ProductPict{ProductID: productId, Filename: "c37ab8d0072937659975b874dafe04cb.jpg"})
 		db.Create(&mdl.ProductPrice{CampaignID: campaignId, ProductID: productId, Price: 10000})
 		db.Callback().Create().Remove("get_new_id")
@@ -112,11 +99,11 @@ func DBSeed(isActive bool, db *gorm.DB ) {
 			productId = scope.PrimaryKeyValue().(uint)
 		})
 
-		db.Create(&mdl.Product{RetailerID: retailerId, CategoryID: categoryId, Name: "Rendang Daging Sapi", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, rendang, sapi"})
+		db.Create(&mdl.Product{CategoryID: categoryId, Name: "Rendang Daging Sapi", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, rendang, sapi"})
 		db.Create(&mdl.ProductPict{ProductID: productId, Filename: "1b70abfe370b98393d3e08fcf97891cc.jpg"})
 		db.Create(&mdl.ProductPrice{CampaignID: campaignId, ProductID: productId, Price: 25000})
 		
-		db.Create(&mdl.Product{RetailerID: retailerId, CategoryID: categoryId, Name: "Ayam Balado", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, balado, ayam"})
+		db.Create(&mdl.Product{CategoryID: categoryId, Name: "Ayam Balado", Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum convallis ligula ac cursus. Curabitur leo augue, sagittis vitae ante non, ullamcorper iaculis dui. Proin ac hendrerit velit.", Tags: "daging, balado, ayam"})
 		db.Create(&mdl.ProductPict{ProductID: productId, Filename: "6533e11e314b63821e1f569899d8f331.jpg"})
 		db.Create(&mdl.ProductPrice{CampaignID: campaignId, ProductID: productId, Price: 20000})
 

@@ -6,7 +6,6 @@ import (
 
 type Product struct {
 	gorm.Model
-	RetailerID				uint				`gorm:"type:bigint; not null"`
 	CategoryID				uint				`gorm:"type:bigint; not null"`
 	Name							string				`gorm:"type:varchar(128); not null"`
 	Description				string				`gorm:"type:varchar(512); not null"`
@@ -14,6 +13,5 @@ type Product struct {
 	OrderCount				uint				`gorm:"type:bigint; not null; default: 0"`
 	ProductPicts			[]ProductPict
 	ProductPrice			ProductPrice
-	Retailer 					Retailer
 	Category  				Category
 }

@@ -78,13 +78,6 @@ func main() {
 	router.GET("/product-price/:id", dbconn.GetProductPrice)
 	router.GET("/product-prices", dbconn.GetProductPrices)
 	
-	// retailer endpoints
-	router.POST("/retailer", dbconn.CreateRetailer)
-	router.PUT("/retailer/:id", dbconn.UpdateRetailer)
-	router.DELETE("/retailer/:id", dbconn.DeleteRetailer)
-	router.GET("/retailer/:id", dbconn.GetRetailer)
-	router.GET("/retailers", dbconn.GetRetailers)
-
 	// user endpoints
 	router.POST("/user", dbconn.CreateUser)
 	router.PUT("/user/:id", dbconn.UpdateUser)
