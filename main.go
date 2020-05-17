@@ -41,6 +41,7 @@ func main() {
 	router.POST("/register", dbconn.Register)
 	router.POST("/verify", dbconn.Verify)
 	router.GET("/latest", dbconn.GetLatest)
+	router.POST("/product-search", dbconn.ProductSearch)
 
 	// campaign endpoints
 	router.POST("/campaign", dbconn.CreateCampaign)

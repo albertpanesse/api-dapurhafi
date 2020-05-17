@@ -6,7 +6,7 @@ import (
 
 type Retailer struct {
 	gorm.Model
-	UserID					uint					`gorm:"type:int; not null"`
+	UserID					uint					`gorm:"type:bigint; not null"`
 	Name						string				`gorm:"type:varchar(128); not null"`
 	ProfileImage		string				`gorm:"type:varchar(128)"`
 	IsActive				bool					`form:"type:bool; not null; default false`

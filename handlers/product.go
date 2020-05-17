@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	mdl "api-dapurhafi/models"
+	"strconv"
 )
 
 func (dbconn *DBConn) CreateProduct(c *gin.Context) {
@@ -105,6 +106,36 @@ func (dbconn *DBConn) GetLatest(c *gin.Context) {
 	)
 	
 	dbconn.DB.Preload("ProductPicts").Preload("ProductPrice").Preload("Retailer").Preload("Category").Find(&products).Order("updated_at desc")
+
+	result = gin.H{
+		"success": true,
+		"data": products,
+	}
+	
+	c.JSON(http.StatusOK, result)
+}
+
+func (dbconn *DBConn) ProductSearch(c *gin.Context) {
+	var (
+		products []mdl.Product
+		result gin.H
+	)
+
+	keyword := c.Param("keyword")
+	categoryId := c.Param("categoryId")
+
+	var chain = dbconn.DB.Find(&products)
+
+	if (keyword != "") {
+		chain = chain.Where("name LIKE ?", "%" + keyword + "%").Find(&products)
+	}
+
+	if (categoryId != "-1") {
+		var _categoryId, _ = strconv.ParseUint(categoryId, 10, 16)
+		chain = chain.Where(mdl.Product{CategoryID: uint(_categoryId)}).Find(&products)
+	}
+	
+	chain.Preload("ProductPicts").Preload("ProductPrice").Preload("Retailer").Preload("Category").Find(&products)
 
 	result = gin.H{
 		"success": true,
