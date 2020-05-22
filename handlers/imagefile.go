@@ -3,21 +3,18 @@ package handlers
 import (
 	"io"
 	"os"
-	"fmt"
 	"strconv"
 	"net/http"
 	"github.com/gin-gonic/gin"
 )
 
-func ImageFile(c *gin.Context) {
+func GetImage(c *gin.Context) {
 	Filename := c.Param("filename")
 
 	if Filename == "" {
 		http.Error(c.Writer, "Filename is not specified in url.", 400)
 		return
 	}
-
-	fmt.Println("Client requests: " + Filename)
 
 	fullPath := "./images/" + Filename
 
@@ -43,4 +40,9 @@ func ImageFile(c *gin.Context) {
 	io.Copy(c.Writer, Openfile)
 
 	return
+}
+
+func UploadImage(c *gin.Context) {
+	// file, handler, err := c.Request.FormFile("uploadfile")
+	
 }

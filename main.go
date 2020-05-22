@@ -13,9 +13,10 @@ import (
 
 func main() {
 	gotenv.Load()
-	
+
 	db := cfg.DBInit()
-	
+	cfg.DBSeed(os.Getenv("SEEDING_ACTIVE") == "true", db)
+
 	dbconn := &hnd.DBConn{DB: db}
 
 	router := gin.Default()
@@ -33,22 +34,56 @@ func main() {
 	}))
 
 	// serve image
-	router.GET("/image/:filename", hnd.ImageFile)
+	router.GET("/image/:filename", hnd.GetImage)
+	router.POST("/image", hnd.UploadImage)
 
-	// auth endpoint
+	// custom endpoints
 	router.POST("/register", dbconn.Register)
 	router.POST("/verify", dbconn.Verify)
+	router.GET("/latest", dbconn.GetLatest)
+	router.POST("/product-search", dbconn.ProductSearch)
+
+	// campaign endpoints
+	router.POST("/campaign", dbconn.CreateCampaign)
+	router.PUT("/campaign/:id", dbconn.UpdateCampaign)
+	router.DELETE("/campaign/:id", dbconn.DeleteCampaign)
+	router.GET("/campaign/:id", dbconn.GetCampaign)
+	router.GET("/campaigns", dbconn.GetCampaigns)
+
+	// category endpoints
+	router.POST("/category", dbconn.CreateCategory)
+	router.PUT("/category/:id", dbconn.UpdateCategory)
+	router.DELETE("/category/:id", dbconn.DeleteCategory)
+	router.GET("/category/:id", dbconn.GetCategory)
+	router.GET("/categories", dbconn.GetCategories)
+
+	// product endpoints
+	router.POST("/product", dbconn.CreateProduct)
+	router.PUT("/product/:id", dbconn.UpdateProduct)
+	router.DELETE("/product/:id", dbconn.DeleteProduct)
+	router.GET("/product/:id", dbconn.GetProduct)
+	router.GET("/products", dbconn.GetProducts)
+	
+	// product_pict endpoints
+	router.POST("/product-pict", dbconn.CreateProductPict)
+	router.PUT("/product-pict/:id", dbconn.UpdateProductPict)
+	router.DELETE("/product-pict/:id", dbconn.DeleteProductPict)
+	router.GET("/product-pict/:id", dbconn.GetProductPict)
+	router.GET("/product-picts", dbconn.GetProductPicts)
+	
+	// product_price endpoints
+	router.POST("/product-price", dbconn.CreateProductPrice)
+	router.PUT("/product-price/:id", dbconn.UpdateProductPrice)
+	router.DELETE("/product-price/:id", dbconn.DeleteProductPrice)
+	router.GET("/product-price/:id", dbconn.GetProductPrice)
+	router.GET("/product-prices", dbconn.GetProductPrices)
 	
 	// user endpoints
-	router.GET("/users", dbconn.GetUsers)
-	router.GET("/user/:id", dbconn.GetUser)
 	router.POST("/user", dbconn.CreateUser)
 	router.PUT("/user/:id", dbconn.UpdateUser)
 	router.DELETE("/user/:id", dbconn.DeleteUser)
+	router.GET("/user/:id", dbconn.GetUser)
+	router.GET("/users", dbconn.GetUsers)
 
-	// menu endpoints
-	router.GET("/menus", dbconn.GetMenus)
-	router.GET("/menu/:id", dbconn.GetMenu)
-	
-	log.Fatal(router.Run(":" + os.Getenv("PORT")))
+	log.Fatal(router.Run(os.Getenv("HOST") + ":" + os.Getenv("PORT")))
 }
