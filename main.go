@@ -38,17 +38,8 @@ func main() {
 	router.POST("/image", hnd.UploadImage)
 
 	// custom endpoints
-	router.POST("/register", dbconn.Register)
-	router.POST("/verify", dbconn.Verify)
 	router.GET("/latest", dbconn.GetLatest)
 	router.POST("/product-search", dbconn.ProductSearch)
-
-	// campaign endpoints
-	router.POST("/campaign", dbconn.CreateCampaign)
-	router.PUT("/campaign/:id", dbconn.UpdateCampaign)
-	router.DELETE("/campaign/:id", dbconn.DeleteCampaign)
-	router.GET("/campaign/:id", dbconn.GetCampaign)
-	router.GET("/campaigns", dbconn.GetCampaigns)
 
 	// category endpoints
 	router.POST("/category", dbconn.CreateCategory)
@@ -71,19 +62,5 @@ func main() {
 	router.GET("/product-pict/:id", dbconn.GetProductPict)
 	router.GET("/product-picts", dbconn.GetProductPicts)
 	
-	// product_price endpoints
-	router.POST("/product-price", dbconn.CreateProductPrice)
-	router.PUT("/product-price/:id", dbconn.UpdateProductPrice)
-	router.DELETE("/product-price/:id", dbconn.DeleteProductPrice)
-	router.GET("/product-price/:id", dbconn.GetProductPrice)
-	router.GET("/product-prices", dbconn.GetProductPrices)
-	
-	// user endpoints
-	router.POST("/user", dbconn.CreateUser)
-	router.PUT("/user/:id", dbconn.UpdateUser)
-	router.DELETE("/user/:id", dbconn.DeleteUser)
-	router.GET("/user/:id", dbconn.GetUser)
-	router.GET("/users", dbconn.GetUsers)
-
 	log.Fatal(router.Run(os.Getenv("HOST") + ":" + os.Getenv("PORT")))
 }
